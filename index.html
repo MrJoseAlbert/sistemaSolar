@@ -6,11 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Proyecto AR Educativo</title>
     <!-- A-Frame: motor de escena web AR/VR -->
-    <script src="https://aframe.io/releases/1.6.0/aframe.min.js">
-    </script>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <!-- AR.js: librería de realidad aumentada con marcadores -->
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.5/aframe/build/aframe-ar.min.js"></script>
 </head>
 
 <body style="margin: 0; overflow: hidden;">
@@ -19,7 +17,8 @@ a-scene: contenedor principal de la escena.
 arjs: activa el modo AR con cámara web. 
 vr-mode-ui: desactiva el botón VR innecesario en AR. -->
     <a-scene embedded arjs="sourceType: webcam; 
-debugUIEnabled: false;" vr-mode-ui="enabled: false">
+debugUIEnabled: false;
+facingMode: environment;" vr-mode-ui="enabled: false">
         <!-- Declarar el asset (modelo 3D) en el head de la escena -->
         <a-assets>
             <a-asset-item id="mi-modelo" src="solar_system_model_orrery.glb">
@@ -62,6 +61,9 @@ MARCADOR 1: Objeto educativo principal
             </a-gltf-model>
             <!-- Texto secundario -->
             <a-text value="La tierra" position="0 1.5 0" align="center" color="#FFFF00" scale="1.2 1.2 1.2">
+            </a-text>
+            <!-- Dato adicional -->
+            <a-text value="Dato adicional:\nEscribe aqui" position="0 1.1 0" align="center" color="#87CEEB" scale="0.8 0.8 0.8">
             </a-text>
         </a-marker>
 
