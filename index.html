@@ -12,19 +12,55 @@
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js">
     </script>
     <script>
-        // Configurar cámara normal sin zoom
-        navigator.mediaDevices.getUserMedia = (function(originalGetUserMedia) {
-            return function(constraints) {
+        // Forzar uso de la cámara normal trasera sin gran angular
+        window.selectCamera = async function() {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                
+                // Preferir la cámara trasera normal (no frontal, no ultra-gran angular)
+                let selectedDeviceId = null;
+                for (let device of videoDevices) {
+                    const label = device.label.toLowerCase();
+                    // Buscar cámara trasera normal (evitar frontal, ultra-wide, macro)
+                    if ((label.includes('back') || label.includes('rear') || label.includes('main')) && 
+                        !label.includes('front') && !label.includes('ultra') && !label.includes('wide')) {
+                        selectedDeviceId = device.deviceId;
+                        break;
+                    }
+                }
+                
+                // Si no encuentra, usar cualquier cámara trasera
+                if (!selectedDeviceId && videoDevices.length > 0) {
+                    selectedDeviceId = videoDevices[0].deviceId;
+                }
+                
+                // Guardar en sessionStorage para usarla
+                if (selectedDeviceId) {
+                    sessionStorage.setItem('selectedCameraId', selectedDeviceId);
+                }
+            } catch (err) {
+                console.log('Error seleccionando cámara:', err);
+            }
+        };
+        
+        // Sobrescribir getUserMedia para usar la cámara seleccionada
+        const originalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+        navigator.mediaDevices.getUserMedia = function(constraints) {
+            const cameraId = sessionStorage.getItem('selectedCameraId');
+            if (cameraId) {
                 constraints = constraints || {};
                 constraints.video = {
-                    facingMode: 'environment',
-                    zoom: 1,
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
+                    deviceId: { exact: cameraId },
+                    width: { min: 640, ideal: 1280, max: 1920 },
+                    height: { min: 480, ideal: 720, max: 1080 }
                 };
-                return originalGetUserMedia.call(navigator.mediaDevices, constraints);
-            };
-        })(navigator.mediaDevices.getUserMedia);
+            }
+            return originalGetUserMedia(constraints);
+        };
+        
+        // Ejecutar selección de cámara cuando carga la página
+        window.addEventListener('load', selectCamera);
     </script>
 </head>
 
