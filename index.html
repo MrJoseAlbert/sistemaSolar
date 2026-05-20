@@ -8,7 +8,7 @@
     <!-- A-Frame: motor de escena web AR/VR -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <!-- AR.js: librería de realidad aumentada con marcadores -->
-    <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.5/aframe/build/aframe-ar.min.js"></script>
+    <script src="https://unpkg.com/ar.js@3.4.5/aframe/build/aframe-ar.min.js"></script>
 </head>
 
 <body style="margin: 0; overflow: hidden;">
@@ -18,7 +18,8 @@ arjs: activa el modo AR con cámara web.
 vr-mode-ui: desactiva el botón VR innecesario en AR. -->
     <a-scene embedded arjs="sourceType: webcam; 
 debugUIEnabled: false;
-facingMode: environment;" vr-mode-ui="enabled: false">
+facingMode: environment;
+permission: camera;" vr-mode-ui="enabled: false" renderer="precision: low; alpha: true;">
         <!-- Declarar el asset (modelo 3D) en el head de la escena -->
         <a-assets>
             <a-asset-item id="mi-modelo" src="solar_system_model_orrery.glb">
@@ -72,6 +73,23 @@ MARCADOR 1: Objeto educativo principal
 
     </a-scene>
 
+    <script>
+        // Solicitar permiso de cámara explícitamente
+        document.addEventListener('DOMContentLoaded', function() {
+            navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: 'environment'
+                }
+            }).then(function(stream) {
+                console.log('Cámara activada correctamente');
+                // Detener el stream para que AR.js lo maneje
+                stream.getTracks().forEach(track => track.stop());
+            }).catch(function(err) {
+                console.error('Error al acceder a la cámara:', err);
+                alert('Por favor permite el acceso a la cámara para usar AR');
+            });
+        });
+    </script>
 </body>
 
 </html>
