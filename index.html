@@ -6,9 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Proyecto AR Educativo</title>
     <!-- A-Frame: motor de escena web AR/VR -->
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js">
+    </script>
     <!-- AR.js: librería de realidad aumentada con marcadores -->
-    <script src="https://unpkg.com/ar.js@3.4.5/aframe/build/aframe-ar.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js">
+    </script>
 </head>
 
 <body style="margin: 0; overflow: hidden;">
@@ -16,17 +18,12 @@
 a-scene: contenedor principal de la escena. 
 arjs: activa el modo AR con cámara web. 
 vr-mode-ui: desactiva el botón VR innecesario en AR. -->
-    <a-scene embedded arjs="sourceType: webcam; 
-debugUIEnabled: false;
-facingMode: environment;
-permission: camera;" vr-mode-ui="enabled: false" renderer="precision: low; alpha: true;">
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" vr-mode-ui="enabled: false">
         <!-- Declarar el asset (modelo 3D) en el head de la escena -->
         <a-assets>
             <a-asset-item id="mi-modelo" src="solar_system_model_orrery.glb">
             </a-asset-item>
-        </a-assets>
-        <a-assets>
-            <a-asset-item id="mi-modelo-2" src="earth.glb">
+            <a-asset-item id="mi-modelo2" src="earth.glb">
             </a-asset-item>
         </a-assets>
         <!-- ============================================ 
@@ -39,10 +36,6 @@ MARCADOR 1: Objeto educativo principal
                 background="true" background-color="#000000">
             </a-text>
 
-            <!-- Plataforma base decorativa -->
-            <a-cylinder position="0 0.05 0" radius="0.8" height="0.1" color="#333333" opacity="0.7">
-            </a-cylinder>
-
 
             <!-- Usar el modelo dentro del marcador -->
             <a-gltf-model src="#mi-modelo" position="0 0.5 0" scale="0.5 0.5 0.5" animation="property: rotation; 
@@ -53,18 +46,16 @@ MARCADOR 1: Objeto educativo principal
         </a-marker>
 
         <!-- MARCADOR 2: Información complementaria -->
-        <a-marker preset="kanji">
-            <!-- Esfera con color temático -->
-            <a-gltf-model src="#mi-modelo-2" position="0 0.5 0" scale="0.5 0.5 0.5" animation="property: rotation; 
+        <a-marker type="pattern" url="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/data/patt.kanji">
+            <!-- Planeta Tierra -->
+            <a-gltf-model src="#mi-modelo2" position="0 0.5 0" scale="0.1 0.1 0.1" animation="property: rotation; 
             to: 0 360 0; 
             loop: true; 
             dur: 5000">
             </a-gltf-model>
             <!-- Texto secundario -->
-            <a-text value="La tierra" position="0 1.5 0" align="center" color="#FFFF00" scale="1.2 1.2 1.2">
-            </a-text>
-            <!-- Dato adicional -->
-            <a-text value="Dato adicional:\nEscribe aqui" position="0 1.1 0" align="center" color="#87CEEB" scale="0.8 0.8 0.8">
+            <a-text value="Dato adicional:\nTierra: Poblacion 7.8 mil millones" position="0 2 0" align="center" color="#FFFF00"
+                scale="1.2 1.2 1.2">
             </a-text>
         </a-marker>
 
@@ -73,23 +64,6 @@ MARCADOR 1: Objeto educativo principal
 
     </a-scene>
 
-    <script>
-        // Solicitar permiso de cámara explícitamente
-        document.addEventListener('DOMContentLoaded', function() {
-            navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: 'environment'
-                }
-            }).then(function(stream) {
-                console.log('Cámara activada correctamente');
-                // Detener el stream para que AR.js lo maneje
-                stream.getTracks().forEach(track => track.stop());
-            }).catch(function(err) {
-                console.error('Error al acceder a la cámara:', err);
-                alert('Por favor permite el acceso a la cámara para usar AR');
-            });
-        });
-    </script>
 </body>
 
 </html>
